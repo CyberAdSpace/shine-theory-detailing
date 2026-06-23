@@ -22,7 +22,7 @@ export default function Navbar() {
           <Link href="/" className="flex items-center gap-2">
             <span className="text-2xl">✨</span>
             <span className="text-xl font-bold bg-gradient-to-r from-amber-400 to-yellow-300 bg-clip-text text-transparent">
-              Shine Theory
+              Shine Theory Detailing
             </span>
           </Link>
 
