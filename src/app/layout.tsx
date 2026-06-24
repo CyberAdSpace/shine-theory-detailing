@@ -10,7 +10,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Shine Theory Detailing — Mobile Vehicle Detailing Marketplace",
   description:
-    "Turning Dirty Rides Into Showroom Shines! Connect with mobile detailers, find detailing spaces, and get your vehicle looking brand new.",
+    "Mobile Detailing, Done Right. Connect with mobile detailers, find detailing spaces, and get your vehicle looking brand new.",
 };
 
 export default function RootLayout({

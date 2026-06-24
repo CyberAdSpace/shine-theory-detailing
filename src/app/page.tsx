@@ -25,7 +25,7 @@ export default function Home() {
                 </span>
               </h1>
               <p className="mt-4 text-xl sm:text-2xl text-slate-300 font-medium italic">
-                Turning Dirty Rides Into Showroom Shines!
+                Mobile Detailing, Done Right.
               </p>
               <p className="mt-4 text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto">
                 The marketplace connecting vehicle owners with top mobile
