@@ -20,12 +20,14 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32 relative">
             <div className="text-center max-w-3xl mx-auto">
               <h1 className="text-4xl sm:text-6xl font-extrabold text-white leading-tight">
-                Your Vehicle Deserves
                 <span className="block bg-gradient-to-r from-amber-400 to-yellow-300 bg-clip-text text-transparent">
-                  Shine Theory
+                  Shine Theory Detailing
                 </span>
               </h1>
-              <p className="mt-6 text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto">
+              <p className="mt-4 text-xl sm:text-2xl text-slate-300 font-medium italic">
+                Mobile Detailing, Done Right.
+              </p>
+              <p className="mt-4 text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto">
                 The marketplace connecting vehicle owners with top mobile
                 detailers — and the spaces to make it happen.
               </p>
