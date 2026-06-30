@@ -1,5 +1,6 @@
 "use client";
 
+import { Car, Droplet, Zap, TreePine, Square, MapPin, ArrowRight } from "lucide-react";
 import type { Posting } from "@/lib/types";
 import { formatPrice, formatDate, getLocationLabel } from "@/lib/utils";
 import AmenityBadge from "./AmenityBadge";
@@ -11,92 +12,95 @@ interface PostingCardProps {
 
 export default function PostingCard({ posting, onViewDetails }: PostingCardProps) {
   return (
-    <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl overflow-hidden hover:border-amber-500/30 transition-all hover:shadow-lg hover:shadow-amber-500/5 group">
-      <div className="aspect-video bg-slate-700/50 relative overflow-hidden">
-        {posting.photos.length > 0 ? (
-          <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center">
-            <div className="text-center">
-              <span className="text-4xl block mb-2">🚗</span>
-              <span className="text-slate-500 text-xs">
-                {posting.photos.length} photos uploaded
-              </span>
-            </div>
-          </div>
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center">
-            <span className="text-slate-500">No photos</span>
-          </div>
-        )}
+    <button
+      onClick={() => onViewDetails(posting)}
+      className="glass glass-hover text-left w-full overflow-hidden flex flex-col group"
+    >
+      {/* Image / placeholder region */}
+      <div className="relative aspect-video overflow-hidden">
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(135deg, #1a1f2b 0%, #0d1117 60%, #07090d 100%)",
+          }}
+        />
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--text-faint)]">
+          <Car className="w-10 h-10 mb-2 opacity-40" strokeWidth={1.25} />
+          <span className="text-[10px] uppercase tracking-[0.2em]">
+            {posting.photos.length > 0
+              ? `${posting.photos.length} photos`
+              : "Photos coming"}
+          </span>
+        </div>
+
+        {/* Top-right price pill */}
         <div className="absolute top-3 right-3">
-          <span className="bg-amber-500 text-slate-900 px-3 py-1 rounded-full text-sm font-bold">
+          <span
+            className="px-3 py-1 rounded-full text-sm font-semibold"
+            style={{
+              background: "linear-gradient(180deg, #ffcd57 0%, #f0b429 100%)",
+              color: "#07090d",
+              boxShadow: "0 6px 16px -6px rgba(240, 180, 41, 0.6)",
+            }}
+          >
             {formatPrice(posting.targetPrice)}
           </span>
         </div>
+
+        {/* Top-left location pill */}
         <div className="absolute top-3 left-3">
-          <span className="bg-slate-900/80 backdrop-blur-sm text-slate-300 px-2 py-1 rounded-md text-xs">
+          <span className="px-2.5 py-1 rounded-md text-[11px] uppercase tracking-wider bg-[var(--bg-base)]/70 backdrop-blur-sm border border-[var(--border-bright)] text-white">
             {getLocationLabel(posting.locationType)}
           </span>
         </div>
       </div>
 
-      <div className="p-4 space-y-3">
+      <div className="p-5 flex flex-col gap-3 flex-1">
         <div>
-          <h3 className="text-white font-semibold text-lg leading-tight group-hover:text-amber-400 transition-colors">
+          <h3 className="serif text-xl text-white leading-tight group-hover:text-[var(--gold-light)] transition-colors">
             {posting.title}
           </h3>
           {posting.description && (
-            <p className="text-slate-400 text-sm mt-1 line-clamp-2">
+            <p className="text-[var(--text-muted)] text-sm mt-1.5 line-clamp-2">
               {posting.description}
             </p>
           )}
         </div>
 
         {posting.address && (
-          <p className="text-slate-500 text-xs flex items-center gap-1">
-            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                clipRule="evenodd"
-              />
-            </svg>
-            {posting.address}
+          <p className="text-[var(--text-faint)] text-xs flex items-center gap-1.5">
+            <MapPin className="w-3 h-3" />
+            <span className="truncate">{posting.address}</span>
           </p>
         )}
 
         <div className="flex flex-wrap gap-1.5">
-          <AmenityBadge label="Water" active={posting.waterHookup} icon="💧" />
-          <AmenityBadge
-            label="Electric"
-            active={posting.electricalOut}
-            icon="⚡"
-          />
-          <AmenityBadge label="Shade" active={posting.shadeCanopy} icon="🏕️" />
-          <AmenityBadge label="Paved" active={posting.pavedFlat} icon="🅿️" />
+          <AmenityBadge label="Water" active={posting.waterHookup} icon={<Droplet />} />
+          <AmenityBadge label="Electric" active={posting.electricalOut} icon={<Zap />} />
+          <AmenityBadge label="Shade" active={posting.shadeCanopy} icon={<TreePine />} />
+          <AmenityBadge label="Paved" active={posting.pavedFlat} icon={<Square />} />
         </div>
 
-        <div className="flex items-center justify-between pt-2 border-t border-slate-700/50">
-          <div className="text-xs text-slate-500">
+        <div className="flex items-center justify-between pt-3 border-t border-[var(--border)] mt-auto">
+          <div className="text-xs text-[var(--text-faint)]">
             <span>By {posting.userName}</span>
-            <span className="mx-1">·</span>
+            <span className="mx-1.5">·</span>
             <span>{formatDate(posting.createdAt)}</span>
             {posting.bids.length > 0 && (
               <>
-                <span className="mx-1">·</span>
-                <span className="text-amber-500">
+                <span className="mx-1.5">·</span>
+                <span className="text-[var(--gold)]">
                   {posting.bids.length} bid{posting.bids.length !== 1 ? "s" : ""}
                 </span>
               </>
             )}
           </div>
-          <button
-            onClick={() => onViewDetails(posting)}
-            className="text-amber-400 hover:text-amber-300 text-sm font-medium transition-colors"
-          >
-            View Details →
-          </button>
+          <span className="text-[var(--gold-light)] text-sm font-medium inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+            View <ArrowRight className="w-3.5 h-3.5" />
+          </span>
         </div>
       </div>
-    </div>
+    </button>
   );
 }

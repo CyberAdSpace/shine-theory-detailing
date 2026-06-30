@@ -4,6 +4,36 @@ import Link from "next/link";
 import { useAppStore } from "@/store";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Menu, X } from "lucide-react";
+
+const navLinks = [
+  { href: "/post", label: "Post a Job" },
+  { href: "/dashboard", label: "Detailer Board" },
+  { href: "/host", label: "Host a Space" },
+];
+
+function ShineMark({ size = 28 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 28 28"
+      fill="none"
+      aria-label="Shine Theory"
+    >
+      <defs>
+        <linearGradient id="shineG" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#ffcd57" />
+          <stop offset="100%" stopColor="#f0b429" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M14 0 L16 12 L28 14 L16 16 L14 28 L12 16 L0 14 L12 12 Z"
+        fill="url(#shineG)"
+      />
+    </svg>
+  );
+}
 
 export default function Navbar() {
   const { currentUser, logout } = useAppStore();
@@ -16,140 +46,140 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-gradient-to-r from-slate-900 to-slate-800 text-white shadow-lg sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl">✨</span>
-            <span className="text-xl font-bold bg-gradient-to-r from-amber-400 to-yellow-300 bg-clip-text text-transparent">
-              Shine Theory
-            </span>
-          </Link>
-
-          <div className="hidden md:flex items-center gap-6">
+    <>
+      <nav className="sticky top-0 z-50 glass-strong">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
             <Link
-              href="/post"
-              className="text-slate-300 hover:text-amber-400 transition-colors text-sm font-medium"
+              href="/"
+              className="flex items-center gap-2.5 group"
+              onClick={() => setMenuOpen(false)}
             >
-              Post a Job
-            </Link>
-            <Link
-              href="/dashboard"
-              className="text-slate-300 hover:text-amber-400 transition-colors text-sm font-medium"
-            >
-              Detailer Board
-            </Link>
-            <Link
-              href="/host"
-              className="text-slate-300 hover:text-amber-400 transition-colors text-sm font-medium"
-            >
-              Host a Space
+              <ShineMark />
+              <span
+                className="serif text-xl text-white"
+                style={{ letterSpacing: "0.04em" }}
+              >
+                SHINE THEORY
+              </span>
             </Link>
 
-            {currentUser ? (
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-slate-400">
-                  {currentUser.name}
-                  <span className="ml-1 text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400">
-                    {currentUser.role.replace("_", " ")}
-                  </span>
-                </span>
-                <button
-                  onClick={handleLogout}
-                  className="text-sm text-slate-400 hover:text-white transition-colors"
+            <div className="hidden md:flex items-center gap-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="relative px-3 py-2 text-[13px] uppercase tracking-[0.12em] text-[var(--text-muted)] hover:text-[var(--gold-light)] transition-colors group"
                 >
-                  Logout
-                </button>
+                  {link.label}
+                  <span className="absolute left-3 right-3 -bottom-0.5 h-px bg-[var(--gold)] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                </Link>
+              ))}
+
+              <div className="ml-4 flex items-center gap-3">
+                {currentUser ? (
+                  <>
+                    <span className="text-sm text-[var(--text-muted)] hidden lg:inline-flex items-center gap-2">
+                      {currentUser.name}
+                      <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full border border-[var(--gold)]/30 text-[var(--gold)] bg-[var(--gold)]/10">
+                        {currentUser.role.replace("_", " ")}
+                      </span>
+                    </span>
+                    <button
+                      onClick={handleLogout}
+                      className="btn-ghost text-sm py-2"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <Link href="/auth" className="btn-gold text-sm py-2">
+                    Sign In
+                  </Link>
+                )}
               </div>
-            ) : (
-              <Link
-                href="/auth"
-                className="bg-amber-500 hover:bg-amber-400 text-slate-900 px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
-              >
-                Sign In
-              </Link>
-            )}
-          </div>
+            </div>
 
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden p-2 text-slate-300 hover:text-white"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+            <button
+              onClick={() => setMenuOpen(true)}
+              className="md:hidden p-2 text-[var(--text-strong)]"
+              aria-label="Open menu"
             >
-              {menuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              )}
-            </svg>
-          </button>
+              <Menu className="w-6 h-6" />
+            </button>
+          </div>
         </div>
+      </nav>
 
-        {menuOpen && (
-          <div className="md:hidden pb-4 border-t border-slate-700 mt-2 pt-4 space-y-3">
-            <Link
-              href="/post"
-              className="block text-slate-300 hover:text-amber-400"
-              onClick={() => setMenuOpen(false)}
-            >
-              Post a Job
-            </Link>
-            <Link
-              href="/dashboard"
-              className="block text-slate-300 hover:text-amber-400"
-              onClick={() => setMenuOpen(false)}
-            >
-              Detailer Board
-            </Link>
-            <Link
-              href="/host"
-              className="block text-slate-300 hover:text-amber-400"
-              onClick={() => setMenuOpen(false)}
-            >
-              Host a Space
-            </Link>
-            {currentUser ? (
-              <>
-                <div className="text-sm text-slate-400">
-                  Signed in as {currentUser.name}
-                </div>
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setMenuOpen(false);
-                  }}
-                  className="text-sm text-red-400 hover:text-red-300"
+      {/* Mobile drawer */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-[60] md:hidden">
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={() => setMenuOpen(false)}
+          />
+          <aside className="absolute right-0 top-0 bottom-0 w-[85%] max-w-sm glass-strong p-6 flex flex-col">
+            <div className="flex items-center justify-between mb-10">
+              <div className="flex items-center gap-2.5">
+                <ShineMark />
+                <span
+                  className="serif text-lg text-white"
+                  style={{ letterSpacing: "0.04em" }}
                 >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <Link
-                href="/auth"
-                className="block bg-amber-500 text-slate-900 px-4 py-2 rounded-lg text-sm font-semibold text-center"
+                  SHINE THEORY
+                </span>
+              </div>
+              <button
                 onClick={() => setMenuOpen(false)}
+                className="p-2 text-[var(--text-muted)]"
+                aria-label="Close menu"
               >
-                Sign In
-              </Link>
-            )}
-          </div>
-        )}
-      </div>
-    </nav>
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <nav className="flex flex-col gap-1 mb-auto">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="text-lg py-3 border-b border-[var(--border)] uppercase tracking-[0.1em] text-[var(--text-body)] hover:text-[var(--gold-light)] transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+
+            <div className="pt-6">
+              {currentUser ? (
+                <>
+                  <div className="text-sm text-[var(--text-muted)] mb-3">
+                    Signed in as {currentUser.name}
+                  </div>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setMenuOpen(false);
+                    }}
+                    className="btn-ghost w-full"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href="/auth"
+                  onClick={() => setMenuOpen(false)}
+                  className="btn-gold w-full"
+                >
+                  Sign In
+                </Link>
+              )}
+            </div>
+          </aside>
+        </div>
+      )}
+    </>
   );
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import { Droplet, Zap, TreePine, Square, MapPin } from "lucide-react";
 import type { HostListing } from "@/lib/types";
 import { formatPrice, getSpaceTypeLabel } from "@/lib/utils";
 import AmenityBadge from "./AmenityBadge";
@@ -10,61 +12,69 @@ interface HostListingCardProps {
 
 export default function HostListingCard({ listing }: HostListingCardProps) {
   return (
-    <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl overflow-hidden hover:border-amber-500/30 transition-all">
-      <div className="aspect-video bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center relative">
-        <div className="text-center">
-          <span className="text-4xl block mb-2">
-            {listing.spaceType === "GARAGE"
-              ? "🏠"
-              : listing.spaceType === "COMMERCIAL_BAY"
-                ? "🏭"
-                : "🏡"}
-          </span>
-          <span className="text-slate-500 text-xs">
-            {getSpaceTypeLabel(listing.spaceType)}
-          </span>
-        </div>
+    <div className="glass glass-hover overflow-hidden flex flex-col">
+      <div className="relative aspect-video overflow-hidden">
+        <Image
+          src="/img/space.png"
+          alt={listing.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-cover"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(7,9,13,0.15) 30%, rgba(7,9,13,0.55) 100%)",
+          }}
+        />
+
+        {/* Top-right rate pill */}
         <div className="absolute top-3 right-3">
-          <span className="bg-amber-500 text-slate-900 px-3 py-1 rounded-full text-sm font-bold">
+          <span
+            className="px-3 py-1 rounded-full text-sm font-semibold"
+            style={{
+              background: "linear-gradient(180deg, #ffcd57 0%, #f0b429 100%)",
+              color: "#07090d",
+              boxShadow: "0 6px 16px -6px rgba(240, 180, 41, 0.6)",
+            }}
+          >
             {listing.rateType === "HOURLY"
               ? `${formatPrice(listing.hourlyRate ?? 0)}/hr`
               : formatPrice(listing.flatRate ?? 0)}
           </span>
         </div>
+
+        {/* Top-left space-type pill */}
+        <div className="absolute top-3 left-3">
+          <span className="px-2.5 py-1 rounded-md text-[11px] uppercase tracking-wider bg-[var(--bg-base)]/70 backdrop-blur-sm border border-[var(--border-bright)] text-white">
+            {getSpaceTypeLabel(listing.spaceType)}
+          </span>
+        </div>
       </div>
 
-      <div className="p-4 space-y-3">
-        <h3 className="text-white font-semibold text-lg">{listing.title}</h3>
+      <div className="p-5 flex flex-col gap-3 flex-1">
+        <h3 className="serif text-xl text-white leading-tight">{listing.title}</h3>
         {listing.description && (
-          <p className="text-slate-400 text-sm line-clamp-2">
+          <p className="text-[var(--text-muted)] text-sm line-clamp-2">
             {listing.description}
           </p>
         )}
 
-        <p className="text-slate-500 text-xs flex items-center gap-1">
-          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-              clipRule="evenodd"
-            />
-          </svg>
-          {listing.address}
+        <p className="text-[var(--text-faint)] text-xs flex items-center gap-1.5">
+          <MapPin className="w-3 h-3" />
+          <span className="truncate">{listing.address}</span>
         </p>
 
         <div className="flex flex-wrap gap-1.5">
-          <AmenityBadge label="Water" active={listing.waterHookup} icon="💧" />
-          <AmenityBadge
-            label="Electric"
-            active={listing.electricalOut}
-            icon="⚡"
-          />
-          <AmenityBadge label="Shade" active={listing.shadeCanopy} icon="🏕️" />
-          <AmenityBadge label="Paved" active={listing.pavedFlat} icon="🅿️" />
+          <AmenityBadge label="Water" active={listing.waterHookup} icon={<Droplet />} />
+          <AmenityBadge label="Electric" active={listing.electricalOut} icon={<Zap />} />
+          <AmenityBadge label="Shade" active={listing.shadeCanopy} icon={<TreePine />} />
+          <AmenityBadge label="Paved" active={listing.pavedFlat} icon={<Square />} />
         </div>
 
-        <div className="text-xs text-slate-500 pt-2 border-t border-slate-700/50">
-          Hosted by {listing.hostName}
+        <div className="text-xs text-[var(--text-faint)] pt-3 border-t border-[var(--border)] mt-auto">
+          Hosted by <span className="text-[var(--text-muted)]">{listing.hostName}</span>
         </div>
       </div>
     </div>

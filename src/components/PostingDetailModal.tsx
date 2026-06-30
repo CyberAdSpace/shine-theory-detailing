@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { X, Car, Droplet, Zap, TreePine, Square, ArrowRight } from "lucide-react";
 import type { Posting } from "@/lib/types";
 import { useAppStore } from "@/store";
 import { formatPrice, formatDate, getLocationLabel } from "@/lib/utils";
@@ -41,163 +42,151 @@ export default function PostingDetailModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6 space-y-6">
-          <div className="flex items-start justify-between">
+    <div
+      className="fixed inset-0 z-[70] flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+      <div
+        className="relative glass-strong max-w-2xl w-full max-h-[90vh] overflow-y-auto rounded-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-7 space-y-6">
+          <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-bold text-white">
+              <span className="eyebrow mb-2 block">
+                {getLocationLabel(posting.locationType)}
+              </span>
+              <h2 className="serif text-3xl text-white leading-tight">
                 {posting.title}
               </h2>
-              <p className="text-slate-400 text-sm mt-1">
+              <p className="text-[var(--text-muted)] text-sm mt-2">
                 Posted by {posting.userName} · {formatDate(posting.createdAt)}
               </p>
             </div>
             <button
               onClick={onClose}
-              className="text-slate-400 hover:text-white p-1"
+              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-white hover:bg-white/5 transition-colors"
+              aria-label="Close"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              <X className="w-5 h-5" />
             </button>
           </div>
 
+          {/* Photo grid */}
           <div className="grid grid-cols-3 gap-3">
-            {posting.photos.map((_, i) => (
+            {(posting.photos.length > 0
+              ? posting.photos
+              : [null, null, null]
+            ).map((_, i) => (
               <div
                 key={i}
-                className="aspect-square bg-slate-700/50 rounded-lg flex items-center justify-center"
+                className="aspect-square rounded-xl flex items-center justify-center border border-[var(--border)]"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #1a1f2b 0%, #0d1117 60%, #07090d 100%)",
+                }}
               >
-                <span className="text-3xl">🚗</span>
+                <Car className="w-7 h-7 text-[var(--text-faint)] opacity-50" strokeWidth={1.25} />
               </div>
             ))}
           </div>
 
           {posting.description && (
-            <p className="text-slate-300">{posting.description}</p>
+            <p className="text-[var(--text-body)] leading-relaxed">
+              {posting.description}
+            </p>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-slate-900/50 rounded-lg p-4">
-              <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">
-                Target Price
-              </div>
-              <div className="text-2xl font-bold text-amber-400">
+          {/* Stats grid */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="glass p-4">
+              <div className="eyebrow mb-1">Target Price</div>
+              <div className="serif text-3xl gold-text">
                 {formatPrice(posting.targetPrice)}
               </div>
             </div>
-            <div className="bg-slate-900/50 rounded-lg p-4">
-              <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">
-                Location Type
-              </div>
-              <div className="text-white font-medium">
+            <div className="glass p-4">
+              <div className="eyebrow mb-1">Location</div>
+              <div className="text-white font-medium mt-1">
                 {getLocationLabel(posting.locationType)}
               </div>
             </div>
           </div>
 
           {posting.address && (
-            <div className="bg-slate-900/50 rounded-lg p-4">
-              <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">
-                Address
-              </div>
-              <div className="text-white">{posting.address}</div>
+            <div className="glass p-4">
+              <div className="eyebrow mb-1">Address</div>
+              <div className="text-white text-sm">{posting.address}</div>
             </div>
           )}
 
           <div>
-            <div className="text-xs text-slate-500 uppercase tracking-wider mb-2">
-              Available Amenities
-            </div>
+            <div className="eyebrow mb-3">Available Amenities</div>
             <div className="flex flex-wrap gap-2">
-              <AmenityBadge
-                label="Water Hookup"
-                active={posting.waterHookup}
-                icon="💧"
-              />
-              <AmenityBadge
-                label="Electrical Outlet"
-                active={posting.electricalOut}
-                icon="⚡"
-              />
-              <AmenityBadge
-                label="Shade / Canopy"
-                active={posting.shadeCanopy}
-                icon="🏕️"
-              />
-              <AmenityBadge
-                label="Paved / Flat"
-                active={posting.pavedFlat}
-                icon="🅿️"
-              />
+              <AmenityBadge label="Water Hookup" active={posting.waterHookup} icon={<Droplet />} />
+              <AmenityBadge label="Electrical" active={posting.electricalOut} icon={<Zap />} />
+              <AmenityBadge label="Shade / Canopy" active={posting.shadeCanopy} icon={<TreePine />} />
+              <AmenityBadge label="Paved / Flat" active={posting.pavedFlat} icon={<Square />} />
             </div>
           </div>
 
           {posting.vehicleType && (
-            <div className="flex gap-4 text-sm text-slate-400">
-              <span>Vehicle: {posting.vehicleType}</span>
-              {posting.vehicleYear && <span>Year: {posting.vehicleYear}</span>}
+            <div className="flex gap-4 text-sm text-[var(--text-muted)] border-t border-[var(--border)] pt-4">
+              <span>
+                <span className="text-[var(--text-faint)]">Vehicle:</span> {posting.vehicleType}
+              </span>
+              {posting.vehicleYear && (
+                <span>
+                  <span className="text-[var(--text-faint)]">Year:</span> {posting.vehicleYear}
+                </span>
+              )}
             </div>
           )}
 
-          {/* Bids Section */}
+          {/* Bids */}
           {posting.bids.length > 0 && (
             <div>
-              <h3 className="text-white font-semibold mb-3">
-                Bids ({posting.bids.length})
-              </h3>
+              <div className="eyebrow mb-3">Bids ({posting.bids.length})</div>
               <div className="space-y-2">
                 {posting.bids.map((bid) => (
                   <div
                     key={bid.id}
-                    className="bg-slate-900/50 border border-slate-700/50 rounded-lg p-4 flex items-center justify-between"
+                    className="glass p-4 flex items-center justify-between gap-4"
                   >
-                    <div>
-                      <div className="text-white font-medium">
-                        {bid.detailerName}
-                      </div>
-                      <div className="text-amber-400 font-bold">
+                    <div className="min-w-0 flex-1">
+                      <div className="text-white font-medium">{bid.detailerName}</div>
+                      <div className="serif text-xl gold-text mt-0.5">
                         {formatPrice(bid.amount)}
                       </div>
                       {bid.message && (
-                        <p className="text-slate-400 text-sm mt-1">
+                        <p className="text-[var(--text-muted)] text-sm mt-1.5">
                           {bid.message}
                         </p>
                       )}
                       <span
-                        className={`text-xs mt-1 inline-block px-2 py-0.5 rounded-full ${
+                        className={`text-[10px] mt-2 inline-block px-2 py-0.5 rounded-full uppercase tracking-wider ${
                           bid.status === "PENDING"
-                            ? "bg-yellow-500/20 text-yellow-400"
+                            ? "bg-[var(--gold)]/10 border border-[var(--gold)]/30 text-[var(--gold-light)]"
                             : bid.status === "ACCEPTED"
-                              ? "bg-emerald-500/20 text-emerald-400"
-                              : "bg-red-500/20 text-red-400"
+                              ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-300"
+                              : "bg-red-500/10 border border-red-500/30 text-red-300"
                         }`}
                       >
                         {bid.status}
                       </span>
                     </div>
                     {isOwner && bid.status === "PENDING" && (
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 shrink-0">
                         <button
                           onClick={() => acceptBid(posting.id, bid.id)}
-                          className="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg text-sm"
+                          className="btn-gold text-sm py-1.5 px-3"
                         >
                           Accept
                         </button>
                         <button
                           onClick={() => rejectBid(posting.id, bid.id)}
-                          className="bg-red-600/50 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm"
+                          className="btn-ghost text-sm py-1.5 px-3"
                         >
                           Reject
                         </button>
@@ -209,11 +198,11 @@ export default function PostingDetailModal({
             </div>
           )}
 
-          {/* Bid Form for Detailers */}
+          {/* Bid form */}
           {isDetailer && !alreadyBid && !bidSubmitted && posting.status === "OPEN" && (
             <div>
               {!showBidForm ? (
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={() => {
                       if (!currentUser) return;
@@ -225,59 +214,53 @@ export default function PostingDetailModal({
                       });
                       setBidSubmitted(true);
                     }}
-                    className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-semibold transition-colors"
+                    className="btn-ghost flex-1 py-3"
                   >
                     Accept at {formatPrice(posting.targetPrice)}
                   </button>
                   <button
                     onClick={() => setShowBidForm(true)}
-                    className="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-900 py-3 rounded-xl font-semibold transition-colors"
+                    className="btn-gold flex-1 py-3"
                   >
-                    Counter Offer
+                    Counter Offer <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
               ) : (
-                <div className="bg-slate-900/50 rounded-xl p-4 space-y-3">
-                  <h4 className="text-white font-medium">Submit Counter Offer</h4>
+                <div className="glass p-5 space-y-3">
+                  <h4 className="serif text-lg text-white">Submit Counter Offer</h4>
                   <div>
-                    <label className="text-sm text-slate-400 block mb-1">
+                    <label className="text-xs uppercase tracking-wider text-[var(--text-faint)] block mb-1.5">
                       Your Price
                     </label>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
                         $
                       </span>
                       <input
                         type="number"
                         value={bidAmount}
                         onChange={(e) => setBidAmount(e.target.value)}
-                        className="w-full bg-slate-800 border border-slate-600 rounded-lg pl-7 pr-4 py-2 text-white focus:outline-none focus:border-amber-500"
+                        className="input-premium pl-8"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm text-slate-400 block mb-1">
+                    <label className="text-xs uppercase tracking-wider text-[var(--text-faint)] block mb-1.5">
                       Message (optional)
                     </label>
                     <textarea
                       value={bidMessage}
                       onChange={(e) => setBidMessage(e.target.value)}
                       rows={2}
-                      className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-amber-500 resize-none"
+                      className="input-premium resize-none"
                       placeholder="Why you're the right detailer for this job..."
                     />
                   </div>
                   <div className="flex gap-2">
-                    <button
-                      onClick={handleSubmitBid}
-                      className="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-900 py-2 rounded-lg font-semibold"
-                    >
+                    <button onClick={handleSubmitBid} className="btn-gold flex-1">
                       Submit Offer
                     </button>
-                    <button
-                      onClick={() => setShowBidForm(false)}
-                      className="px-4 py-2 text-slate-400 hover:text-white rounded-lg"
-                    >
+                    <button onClick={() => setShowBidForm(false)} className="btn-ghost">
                       Cancel
                     </button>
                   </div>
@@ -287,21 +270,18 @@ export default function PostingDetailModal({
           )}
 
           {bidSubmitted && (
-            <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-xl p-4 text-center text-emerald-400">
-              Your bid has been submitted! The customer will review it shortly.
+            <div className="glass p-4 text-center text-[var(--gold-light)] border-[var(--gold)]/30">
+              Your bid has been submitted. The customer will review it shortly.
             </div>
           )}
 
           {!currentUser && (
-            <div className="bg-slate-900/50 rounded-xl p-4 text-center">
-              <p className="text-slate-400 mb-2">
+            <div className="glass p-5 text-center">
+              <p className="text-[var(--text-muted)] mb-3">
                 Sign in as a Detailer to bid on this job
               </p>
-              <a
-                href="/auth"
-                className="text-amber-400 hover:text-amber-300 font-medium"
-              >
-                Sign In →
+              <a href="/auth" className="btn-gold text-sm inline-flex">
+                Sign In <ArrowRight className="w-4 h-4" />
               </a>
             </div>
           )}

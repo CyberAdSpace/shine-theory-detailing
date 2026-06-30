@@ -2,6 +2,18 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Home,
+  Warehouse,
+  Building2,
+  Droplet,
+  Zap,
+  TreePine,
+  Square,
+  Sparkles,
+  Plus,
+  X,
+} from "lucide-react";
 import Navbar from "@/components/Navbar";
 import HostListingCard from "@/components/HostListingCard";
 import { useAppStore } from "@/store";
@@ -59,274 +71,329 @@ export default function HostPage() {
 
   const availableListings = hostListings.filter((l) => l.available);
 
+  const spaceTypes: { value: SpaceType; label: string; Icon: typeof Home }[] = [
+    { value: "DRIVEWAY", label: "Driveway", Icon: Home },
+    { value: "GARAGE", label: "Garage", Icon: Warehouse },
+    { value: "COMMERCIAL_BAY", label: "Commercial", Icon: Building2 },
+  ];
+
+  const amenities = [
+    {
+      key: "water",
+      label: "Water Hookup",
+      Icon: Droplet,
+      active: waterHookup,
+      toggle: () => setWaterHookup(!waterHookup),
+    },
+    {
+      key: "electric",
+      label: "Electrical Outlet",
+      Icon: Zap,
+      active: electricalOut,
+      toggle: () => setElectricalOut(!electricalOut),
+    },
+    {
+      key: "shade",
+      label: "Shade / Canopy",
+      Icon: TreePine,
+      active: shadeCanopy,
+      toggle: () => setShadeCanopy(!shadeCanopy),
+    },
+    {
+      key: "paved",
+      label: "Paved / Flat Ground",
+      Icon: Square,
+      active: pavedFlat,
+      toggle: () => setPavedFlat(!pavedFlat),
+    },
+  ];
+
   return (
     <>
       <Navbar />
       <main className="flex-1">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
             <div>
-              <h1 className="text-3xl font-bold text-white">
-                Host a Detailing Space
+              <div className="eyebrow mb-3">For Hosts</div>
+              <h1 className="serif text-4xl sm:text-5xl text-white tracking-tight">
+                Host a detailing space
               </h1>
-              <p className="text-slate-400 mt-1">
-                List your driveway, garage, or commercial bay for detailers to
-                use.
+              <p className="text-[var(--text-muted)] mt-3 max-w-xl">
+                List your driveway, garage, or commercial bay for detailers
+                ready to work. Earn from space you already own.
               </p>
             </div>
             <button
               onClick={() => setShowForm(!showForm)}
-              className="bg-amber-500 hover:bg-amber-400 text-slate-900 px-6 py-3 rounded-xl font-semibold transition-colors whitespace-nowrap"
+              className={showForm ? "btn-ghost" : "btn-gold"}
             >
-              {showForm ? "Cancel" : "+ List a Space"}
+              {showForm ? (
+                <>
+                  <X className="w-4 h-4" /> Cancel
+                </>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4" /> List a Space
+                </>
+              )}
             </button>
           </div>
 
           {submitted && (
-            <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-xl p-4 mb-6 text-emerald-400">
-              Your space has been listed successfully! Detailers can now find it
-              when looking for places to work.
+            <div className="glass rounded-2xl px-5 py-4 mb-8 flex items-center gap-3 border-emerald-500/30">
+              <Sparkles className="w-5 h-5 text-emerald-400" />
+              <span className="text-emerald-300 text-sm">
+                Your space has been listed. Detailers can now find it when
+                booking work in the area.
+              </span>
             </div>
           )}
 
           {/* Create Form */}
           {showForm && (
-            <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-6 mb-8">
-              <h2 className="text-xl font-bold text-white mb-6">
-                List Your Space
-              </h2>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Space Info */}
-                <div className="grid sm:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-6 mb-12">
+              {/* Step 1 — Space basics */}
+              <section className="glass-strong rounded-2xl p-7">
+                <div className="eyebrow mb-1">Step 1</div>
+                <h2 className="serif text-2xl text-white mb-6">
+                  Space basics
+                </h2>
+                <div className="grid sm:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm text-slate-400 mb-1">
-                      Listing Title *
+                    <label className="block text-xs uppercase tracking-wider text-[var(--text-faint)] mb-2">
+                      Listing Title
                     </label>
                     <input
                       type="text"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       required
-                      className="w-full bg-slate-900/50 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
-                      placeholder="e.g., Shaded Driveway with Water"
+                      className="input-premium"
+                      placeholder="e.g., Shaded driveway with water"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-slate-400 mb-1">
-                      Space Type *
+                    <label className="block text-xs uppercase tracking-wider text-[var(--text-faint)] mb-2">
+                      Space Type
                     </label>
                     <div className="grid grid-cols-3 gap-2">
-                      {(
-                        [
-                          { value: "DRIVEWAY", label: "Driveway", icon: "🏡" },
-                          { value: "GARAGE", label: "Garage", icon: "🏠" },
-                          {
-                            value: "COMMERCIAL_BAY",
-                            label: "Commercial",
-                            icon: "🏭",
-                          },
-                        ] as const
-                      ).map((type) => (
-                        <button
-                          key={type.value}
-                          type="button"
-                          onClick={() => setSpaceType(type.value)}
-                          className={`p-3 rounded-lg border text-center transition-all ${
-                            spaceType === type.value
-                              ? "border-amber-500 bg-amber-500/10"
-                              : "border-slate-600 bg-slate-900/50 hover:border-slate-500"
-                          }`}
-                        >
-                          <div className="text-xl">{type.icon}</div>
-                          <div
-                            className={`text-xs mt-1 ${spaceType === type.value ? "text-amber-400" : "text-slate-400"}`}
+                      {spaceTypes.map((type) => {
+                        const Icon = type.Icon;
+                        const active = spaceType === type.value;
+                        return (
+                          <button
+                            key={type.value}
+                            type="button"
+                            onClick={() => setSpaceType(type.value)}
+                            className={`p-3 rounded-xl border text-center transition-all ${
+                              active
+                                ? "border-[var(--gold)]/60 bg-[var(--gold)]/10"
+                                : "border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]"
+                            }`}
                           >
-                            {type.label}
-                          </div>
-                        </button>
-                      ))}
+                            <Icon
+                              className={`w-5 h-5 mx-auto ${active ? "text-[var(--gold)]" : "text-[var(--text-muted)]"}`}
+                            />
+                            <div
+                              className={`text-xs mt-1.5 ${active ? "text-[var(--gold-light)]" : "text-[var(--text-muted)]"}`}
+                            >
+                              {type.label}
+                            </div>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm text-slate-400 mb-1">
+                <div className="mt-5">
+                  <label className="block text-xs uppercase tracking-wider text-[var(--text-faint)] mb-2">
                     Description
                   </label>
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={3}
-                    className="w-full bg-slate-900/50 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 resize-none"
-                    placeholder="Describe your space, what's included, any rules..."
+                    className="input-premium resize-none"
+                    placeholder="What's included, any rules, hours of access..."
                   />
                 </div>
+              </section>
 
-                <div>
-                  <label className="block text-sm text-slate-400 mb-1">
-                    Address *
-                  </label>
+              {/* Step 2 — Location */}
+              <section className="glass-strong rounded-2xl p-7">
+                <div className="eyebrow mb-1">Step 2</div>
+                <h2 className="serif text-2xl text-white mb-6">Location</h2>
+                <label className="block text-xs uppercase tracking-wider text-[var(--text-faint)] mb-2">
+                  Full Address
+                </label>
+                <input
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  required
+                  className="input-premium"
+                  placeholder="Street, city, state, ZIP"
+                />
+                <p className="text-xs text-[var(--text-faint)] mt-2">
+                  Address is only shared after a booking is confirmed.
+                </p>
+              </section>
+
+              {/* Step 3 — Rate */}
+              <section className="glass-strong rounded-2xl p-7">
+                <div className="eyebrow mb-1">Step 3</div>
+                <h2 className="serif text-2xl text-white mb-6">Rate</h2>
+                <div className="grid sm:grid-cols-2 gap-3 mb-5">
+                  <button
+                    type="button"
+                    onClick={() => setRateType("HOURLY")}
+                    className={`p-4 rounded-xl border text-left transition-all ${
+                      rateType === "HOURLY"
+                        ? "border-[var(--gold)]/60 bg-[var(--gold)]/10"
+                        : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                    }`}
+                  >
+                    <div
+                      className={`font-medium ${rateType === "HOURLY" ? "text-[var(--gold-light)]" : "text-white"}`}
+                    >
+                      Hourly Rate
+                    </div>
+                    <div className="text-xs text-[var(--text-faint)] mt-1">
+                      Per-hour fee
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRateType("FLAT")}
+                    className={`p-4 rounded-xl border text-left transition-all ${
+                      rateType === "FLAT"
+                        ? "border-[var(--gold)]/60 bg-[var(--gold)]/10"
+                        : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                    }`}
+                  >
+                    <div
+                      className={`font-medium ${rateType === "FLAT" ? "text-[var(--gold-light)]" : "text-white"}`}
+                    >
+                      Flat Rate
+                    </div>
+                    <div className="text-xs text-[var(--text-faint)] mt-1">
+                      One-time fee per use
+                    </div>
+                  </button>
+                </div>
+                <div className="relative max-w-xs">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--gold)] text-lg font-semibold">
+                    $
+                  </span>
                   <input
-                    type="text"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
+                    type="number"
+                    value={rateType === "HOURLY" ? hourlyRate : flatRate}
+                    onChange={(e) =>
+                      rateType === "HOURLY"
+                        ? setHourlyRate(e.target.value)
+                        : setFlatRate(e.target.value)
+                    }
                     required
-                    className="w-full bg-slate-900/50 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
-                    placeholder="Full address"
+                    min="1"
+                    step="0.01"
+                    className="input-premium pl-9 pr-20 text-xl font-bold"
+                    placeholder="0.00"
                   />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-faint)] text-xs uppercase tracking-wider">
+                    {rateType === "HOURLY" ? "/hour" : "flat"}
+                  </span>
                 </div>
+              </section>
 
-                {/* Rate */}
-                <div>
-                  <label className="block text-sm text-slate-400 mb-2">
-                    Rate Structure *
-                  </label>
-                  <div className="flex gap-3 mb-3">
-                    <button
-                      type="button"
-                      onClick={() => setRateType("HOURLY")}
-                      className={`flex-1 p-3 rounded-lg border text-center transition-all ${
-                        rateType === "HOURLY"
-                          ? "border-amber-500 bg-amber-500/10 text-amber-400"
-                          : "border-slate-600 bg-slate-900/50 text-slate-400"
-                      }`}
-                    >
-                      <div className="font-medium">Hourly Rate</div>
-                      <div className="text-xs mt-0.5 opacity-70">
-                        Per-hour fee
-                      </div>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setRateType("FLAT")}
-                      className={`flex-1 p-3 rounded-lg border text-center transition-all ${
-                        rateType === "FLAT"
-                          ? "border-amber-500 bg-amber-500/10 text-amber-400"
-                          : "border-slate-600 bg-slate-900/50 text-slate-400"
-                      }`}
-                    >
-                      <div className="font-medium">Flat Rate</div>
-                      <div className="text-xs mt-0.5 opacity-70">
-                        One-time fee per use
-                      </div>
-                    </button>
-                  </div>
-                  <div className="relative max-w-xs">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
-                      $
-                    </span>
-                    <input
-                      type="number"
-                      value={rateType === "HOURLY" ? hourlyRate : flatRate}
-                      onChange={(e) =>
-                        rateType === "HOURLY"
-                          ? setHourlyRate(e.target.value)
-                          : setFlatRate(e.target.value)
-                      }
-                      required
-                      min="1"
-                      step="0.01"
-                      className="w-full bg-slate-900/50 border border-slate-600 rounded-lg pl-8 pr-16 py-3 text-white text-lg font-bold focus:outline-none focus:border-amber-500"
-                      placeholder="0.00"
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">
-                      {rateType === "HOURLY" ? "/hour" : "flat"}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Amenities */}
-                <div>
-                  <label className="block text-sm text-slate-400 mb-2">
-                    Utilities & Amenities Provided
-                  </label>
-                  <div className="grid grid-cols-2 gap-3">
-                    {[
-                      {
-                        key: "water",
-                        label: "Water Hookup",
-                        icon: "💧",
-                        active: waterHookup,
-                        toggle: () => setWaterHookup(!waterHookup),
-                      },
-                      {
-                        key: "electric",
-                        label: "Electrical Outlet",
-                        icon: "⚡",
-                        active: electricalOut,
-                        toggle: () => setElectricalOut(!electricalOut),
-                      },
-                      {
-                        key: "shade",
-                        label: "Shade / Canopy",
-                        icon: "🏕️",
-                        active: shadeCanopy,
-                        toggle: () => setShadeCanopy(!shadeCanopy),
-                      },
-                      {
-                        key: "paved",
-                        label: "Paved / Flat Ground",
-                        icon: "🅿️",
-                        active: pavedFlat,
-                        toggle: () => setPavedFlat(!pavedFlat),
-                      },
-                    ].map((amenity) => (
+              {/* Step 4 — Amenities */}
+              <section className="glass-strong rounded-2xl p-7">
+                <div className="eyebrow mb-1">Step 4</div>
+                <h2 className="serif text-2xl text-white mb-6">
+                  Utilities & amenities
+                </h2>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {amenities.map((a) => {
+                    const Icon = a.Icon;
+                    return (
                       <button
-                        key={amenity.key}
+                        key={a.key}
                         type="button"
-                        onClick={amenity.toggle}
-                        className={`flex items-center gap-3 p-4 rounded-lg border transition-all ${
-                          amenity.active
-                            ? "border-emerald-500 bg-emerald-500/10"
-                            : "border-slate-600 bg-slate-900/50 hover:border-slate-500"
+                        onClick={a.toggle}
+                        className={`flex items-center gap-4 p-4 rounded-xl border text-left transition-all ${
+                          a.active
+                            ? "border-[var(--gold)]/60 bg-[var(--gold)]/10"
+                            : "border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]"
                         }`}
                       >
-                        <span className="text-2xl">{amenity.icon}</span>
-                        <div className="text-left">
+                        <div
+                          className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                            a.active
+                              ? "bg-[var(--gold)]/20"
+                              : "bg-white/[0.04]"
+                          }`}
+                        >
+                          <Icon
+                            className={`w-5 h-5 ${a.active ? "text-[var(--gold)]" : "text-[var(--text-muted)]"}`}
+                          />
+                        </div>
+                        <div>
                           <div
-                            className={`text-sm font-medium ${amenity.active ? "text-emerald-400" : "text-white"}`}
+                            className={`text-sm font-medium ${a.active ? "text-white" : "text-[var(--text-body)]"}`}
                           >
-                            {amenity.label}
+                            {a.label}
                           </div>
-                          <div className="text-xs text-slate-500">
-                            {amenity.active ? "Provided" : "Not provided"}
+                          <div className="text-xs text-[var(--text-faint)] mt-0.5">
+                            {a.active ? "Provided" : "Not provided"}
                           </div>
                         </div>
                       </button>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
+              </section>
 
-                <button
-                  type="submit"
-                  className="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 py-4 rounded-xl text-lg font-bold transition-all hover:shadow-lg hover:shadow-amber-500/25"
-                >
+              {/* Submit */}
+              <div className="glass-strong rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="text-sm">
+                  <div className="text-white font-medium">Ready to publish</div>
+                  {!currentUser && (
+                    <div className="text-xs text-[var(--text-faint)] mt-0.5">
+                      You&apos;ll need to sign in before listing.
+                    </div>
+                  )}
+                </div>
+                <button type="submit" className="btn-gold">
                   List My Space
                 </button>
-
-                {!currentUser && (
-                  <p className="text-center text-slate-500 text-sm">
-                    You&apos;ll need to sign in before listing.
-                  </p>
-                )}
-              </form>
-            </div>
+              </div>
+            </form>
           )}
 
           {/* Existing Listings */}
-          <div>
-            <h2 className="text-xl font-semibold text-white mb-4">
-              Available Spaces ({availableListings.length})
-            </h2>
+          <div className="mt-4">
+            <div className="flex items-end justify-between mb-6">
+              <div>
+                <div className="eyebrow mb-1">
+                  Available Spaces · {availableListings.length}
+                </div>
+                <h2 className="serif text-3xl text-white">
+                  Browse listed spaces
+                </h2>
+              </div>
+            </div>
+
             {availableListings.length === 0 ? (
-              <div className="text-center py-20 bg-slate-800/30 rounded-xl">
-                <div className="text-5xl mb-4">🏠</div>
-                <h3 className="text-xl text-white font-semibold mb-2">
+              <div className="glass rounded-2xl py-20 text-center">
+                <Home className="w-12 h-12 mx-auto text-[var(--gold)]/60 mb-4" />
+                <h3 className="serif text-2xl text-white mb-2">
                   No spaces listed yet
                 </h3>
-                <p className="text-slate-400">
-                  Be the first to list a detailing space in your area!
+                <p className="text-[var(--text-muted)] max-w-md mx-auto">
+                  Be the first to list a detailing space in your area and start
+                  earning from the driveway you already have.
                 </p>
               </div>
             ) : (
